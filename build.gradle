@@ -4,6 +4,10 @@ plugins {
     id 'java'
 }
 
+ext {
+    guavaVersion = '11.0.2'
+}
+
 group = 'com.pwoj'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
@@ -21,7 +25,11 @@ repositories {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    compile "com.google.guava:guava:${guavaVersion}"
+
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     runtimeOnly 'com.h2database:h2'
