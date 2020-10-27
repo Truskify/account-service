@@ -19,5 +19,5 @@ public class CreateAccountCommand {
     @PESEL
     private String pesel;
     @NotNull
-    private BigDecimal accountBalance;
+    private BigDecimal balance;
 }

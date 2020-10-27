@@ -7,4 +7,6 @@ import java.util.UUID;
 
 @Repository
 interface AccountRepository extends JpaRepository<Account, UUID> {
+
+    boolean existsAccountByPesel(String pesel);
 }

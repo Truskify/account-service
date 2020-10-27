@@ -12,7 +12,7 @@ class AccountMapper {
 
         SubAccount plnAccount = SubAccount.builder()
                 .currency(CurrencyCode.PLN)
-                .balance(command.getAccountBalance())
+                .balance(command.getBalance())
                 .build();
         SubAccount usdAccount = SubAccount.builder()
                 .currency(CurrencyCode.PLN)
