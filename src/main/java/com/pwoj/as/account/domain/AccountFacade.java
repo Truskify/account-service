@@ -10,15 +10,13 @@ import java.util.UUID;
 @Slf4j
 public class AccountFacade {
 
-    private final AccountRepository accountRepository;
-    private final AccountMapper accountMapper;
+    private final AccountManager accountManager;
     private final AccountValidator accountValidator;
 
     public UUID createAccount(CreateAccountCommand command) {
         accountValidator.validateCreateAccountCommand(command);
         log.info("Create new account for pesel [{}].", command.getPesel());
 
-        return accountRepository.save(accountMapper.mapToEntity(command))
-                .getId();
+        return accountManager.createAccount(command);
     }
 }

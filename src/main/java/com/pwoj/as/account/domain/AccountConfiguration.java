@@ -4,11 +4,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class AccountConfiguration {
+class AccountConfiguration {
 
     @Bean
     public AccountFacade accountFacade(AccountRepository accountRepository) {
 
-        return new AccountFacade(accountRepository, new AccountMapper(), new AccountValidator(accountRepository));
+        return new AccountFacade(new AccountManager(accountRepository), new AccountValidator(accountRepository));
     }
 }

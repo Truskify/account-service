@@ -3,12 +3,19 @@ package com.pwoj.as.account.domain;
 import com.google.common.collect.Lists;
 import com.pwoj.as.account.domain.command.CreateAccountCommand;
 import com.pwoj.as.account.domain.dto.CurrencyCode;
+import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
-class AccountMapper {
+@RequiredArgsConstructor
+@Transactional
+class AccountManager{
 
-    Account mapToEntity(CreateAccountCommand command) {
+    private final AccountRepository accountRepository;
+
+    UUID createAccount(CreateAccountCommand command) {
 
         SubAccount plnAccount = SubAccount.builder()
                 .currency(CurrencyCode.PLN)
@@ -19,14 +26,13 @@ class AccountMapper {
                 .balance(BigDecimal.ZERO)
                 .build();
 
-        return Account.builder()
+        return accountRepository.save(Account.builder()
                 .name(command.getName())
                 .surname(command.getSurname())
                 .pesel(command.getPesel())
                 .subAccounts(Lists.newArrayList(plnAccount, usdAccount))
-                .build();
+                .build())
+                .getId();
 
     }
-
-
 }
