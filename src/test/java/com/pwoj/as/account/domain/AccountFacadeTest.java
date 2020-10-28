@@ -7,22 +7,28 @@ import com.pwoj.as.account.domain.dto.CurrencyCode;
 import com.pwoj.as.account.domain.dto.SubAccountDto;
 import com.pwoj.as.account.domain.exception.AccountExistsException;
 import com.pwoj.as.account.domain.exception.AccountNotFoundException;
+import com.pwoj.as.account.domain.exception.InsufficientFundsException;
 import com.pwoj.as.account.domain.exception.UserTooYoungException;
-import org.hamcrest.Matchers;
+import com.pwoj.as.account.infrastructure.NbpRestClient;
+import com.pwoj.as.account.infrastructure.dto.ExchangeData;
+import com.pwoj.as.account.infrastructure.dto.Rate;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.UUID;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 
 @SpringBootTest
 @Transactional
@@ -38,6 +44,8 @@ class AccountFacadeTest {
     private AccountRepository accountRepository;
     @Autowired
     private SubAccountRepository subAccountRepository;
+    @MockBean
+    private NbpRestClient nbpRestClient;
 
     @Test
     void shouldCreateAccountAndSubAccounts() {
@@ -83,6 +91,62 @@ class AccountFacadeTest {
 
         assertEquals(expectedAccount, result);
 
+    }
+
+    @Test
+    void shouldExchangeMoney() {
+        BigDecimal plnBalance = new BigDecimal("299.99");
+        BigDecimal usdBalance = new BigDecimal("0");
+        Account account = prepareDb(usdBalance, plnBalance);
+        BigDecimal exchangeRate = new BigDecimal("3.5678");
+        prepareNbpRestClientMock(exchangeRate);
+
+        BigDecimal exchangeAmount = new BigDecimal("10.10");
+        accountFacade.exchangeMoneyBetweenAccounts(account.getId(), CurrencyCode.PLN, CurrencyCode.USD, exchangeAmount);
+
+
+        SubAccount plnSubAccount = subAccountRepository.findByAccountIdAndCurrency(account.getId(), CurrencyCode.PLN);
+        SubAccount usdSubAccount = subAccountRepository.findByAccountIdAndCurrency(account.getId(), CurrencyCode.USD);
+        BigDecimal expectedUsdBalance = usdBalance.add(exchangeAmount.divide(exchangeRate, 2, RoundingMode.HALF_EVEN));
+
+        assertEquals(plnBalance.subtract(exchangeAmount), plnSubAccount.getBalance());
+        assertEquals(expectedUsdBalance, usdSubAccount.getBalance());
+
+    }
+
+    @Test
+    void shouldThrowExceptionWhenInsufficientFunds() {
+        BigDecimal plnBalance = new BigDecimal("0");
+        BigDecimal usdBalance = new BigDecimal("0");
+        Account account = prepareDb(usdBalance, plnBalance);
+
+        BigDecimal exchangeAmount = new BigDecimal("10");
+
+        assertThrows(InsufficientFundsException.class,
+                () -> accountFacade.exchangeMoneyBetweenAccounts(account.getId(), CurrencyCode.PLN, CurrencyCode.USD, exchangeAmount));
+
+    }
+
+    @Test
+    void shouldThrowExceptionWhenWrongCurrencyPair() {
+        BigDecimal plnBalance = new BigDecimal("200");
+        BigDecimal usdBalance = new BigDecimal("2000");
+        Account account = prepareDb(usdBalance, plnBalance);
+        prepareNbpRestClientMock(new BigDecimal("1.00"));
+
+        BigDecimal exchangeAmount = new BigDecimal("10");
+
+        assertThrows(IllegalStateException.class,
+                () -> accountFacade.exchangeMoneyBetweenAccounts(account.getId(), CurrencyCode.USD, CurrencyCode.USD, exchangeAmount));
+
+    }
+
+    private void prepareNbpRestClientMock(BigDecimal exchangeRate) {
+        Mockito.when(nbpRestClient.getExchangeRate(any(CurrencyCode.class))).thenReturn(ExchangeData.builder()
+                .rates(Lists.newArrayList(Rate.builder()
+                        .mid(exchangeRate)
+                        .build()))
+                .build());
     }
 
     @Test

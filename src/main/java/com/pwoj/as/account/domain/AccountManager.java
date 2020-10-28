@@ -62,14 +62,13 @@ class AccountManager {
     void exchangeMoneyBetweenAccounts(UUID accountId, CurrencyCode sourceCurrency, CurrencyCode targetCurrency, BigDecimal amount) {
         CurrencyCode currency = CurrencyCode.PLN.equals(sourceCurrency) ? targetCurrency : sourceCurrency;
 
-        BigDecimal rate = nbpRestClient.getExchangeRate(currency).getRates().get(0).getMid();
-
         SubAccount sourceCurrencySubAccount = subAccountRepository.findByAccountIdAndCurrency(accountId, sourceCurrency);
         SubAccount targetCurrencySubAccount = subAccountRepository.findByAccountIdAndCurrency(accountId, targetCurrency);
         if (amount.compareTo(sourceCurrencySubAccount.getBalance()) > 0) {
             log.error("Insufficient funds to make exchange for account in [{}].", sourceCurrency);
             throw new InsufficientFundsException("Insufficient funds to make exchange.");
         }
+        BigDecimal rate = nbpRestClient.getExchangeRate(currency).getRates().get(0).getMid();
 
         if (CurrencyCode.PLN.equals(targetCurrency)) {
             BigDecimal targetAmount = amount.multiply(rate).setScale(2, RoundingMode.HALF_EVEN);
@@ -81,7 +80,7 @@ class AccountManager {
             sourceCurrencySubAccount.setBalance(sourceCurrencySubAccount.getBalance().subtract(amount));
         } else {
             log.error("At least one of currency should be in PLN.");
-            throw new IllegalStateException();
+            throw new IllegalStateException("At least one of currency should be in PLN.");
         }
         subAccountRepository.save(targetCurrencySubAccount);
         subAccountRepository.save(sourceCurrencySubAccount);

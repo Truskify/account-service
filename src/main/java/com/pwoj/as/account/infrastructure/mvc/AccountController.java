@@ -1,5 +1,7 @@
-package com.pwoj.as.account;
+package com.pwoj.as.account.infrastructure.mvc;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pwoj.as.account.domain.AccountFacade;
 import com.pwoj.as.account.domain.command.CreateAccountCommand;
 import com.pwoj.as.account.domain.dto.AccountDto;
@@ -35,6 +37,7 @@ import java.util.UUID;
 class AccountController {
 
     private final AccountFacade accountFacade;
+    private final ObjectMapper objectMapper;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -59,28 +62,40 @@ class AccountController {
     }
 
     @ExceptionHandler({AccountNotFoundException.class})
-    public ResponseEntity<String> handleNotMatchedIdentityException(AccountNotFoundException e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON).body(e.getMessage());
+    public ResponseEntity<String> handleAccountNotFoundException(AccountNotFoundException e) throws JsonProcessingException {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON).body(buildErrorResponseJson(e));
     }
 
     @ExceptionHandler({UserTooYoungException.class})
-    public ResponseEntity<String> handleNotMatchedIdentityException(UserTooYoungException e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON).body(e.getMessage());
+    public ResponseEntity<String> handleUserTooYoungException(UserTooYoungException e) throws JsonProcessingException {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON).body(buildErrorResponseJson(e));
     }
 
     @ExceptionHandler({AccountExistsException.class})
-    public ResponseEntity<String> handleNotMatchedIdentityException(AccountExistsException e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON).body(e.getMessage());
+    public ResponseEntity<String> handleAccountExistsException(AccountExistsException e) throws JsonProcessingException {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON).body(buildErrorResponseJson(e));
     }
 
     @ExceptionHandler({InsufficientFundsException.class})
-    public ResponseEntity<String> handleNotMatchedIdentityException(InsufficientFundsException e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON).body(e.getMessage());
+    public ResponseEntity<String> handleInsufficientFundsException(InsufficientFundsException e) throws JsonProcessingException {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON).body(buildErrorResponseJson(e));
     }
+
+    @ExceptionHandler({IllegalStateException.class})
+    public ResponseEntity<String> handleIllegalStateException(IllegalStateException e) throws JsonProcessingException {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON).body(buildErrorResponseJson(e));
+    }
+
 
     @ExceptionHandler({WebClientResponseException.class})
     public ResponseEntity<String> handleWebClientResponseException(WebClientResponseException e) {
         log.warn("Error response code: {}, response body: {}", e.getStatusCode(), e.getResponseBodyAsString());
         return ResponseEntity.status(e.getStatusCode()).contentType(MediaType.APPLICATION_JSON).body(e.getResponseBodyAsString());
+    }
+
+    private String buildErrorResponseJson(Exception e) throws JsonProcessingException {
+        return objectMapper.writeValueAsString(ErrorResponse.builder()
+                .errorMessage(e.getMessage())
+                .build());
     }
 }
