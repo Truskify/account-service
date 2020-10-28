@@ -1,6 +1,12 @@
 spring:
+  profiles:
+    active: "dev"
+---
+spring:
+  profiles: dev
   jpa:
     show-sql: true
 
 nbp:
   url: http://api.nbp.pl/api/
+  timeout: 10
