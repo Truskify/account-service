@@ -6,7 +6,6 @@ import com.pwoj.as.account.domain.exception.UserTooYoungException;
 import com.pwoj.as.account.util.PeselHelper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.validator.internal.constraintvalidators.hv.pl.PESELValidator;
 
 import java.time.LocalDate;
 import java.time.Period;
