@@ -1,7 +1,7 @@
-package com.pwoj.as.account.infrastructure;
+package com.pwoj.as.account.infrastructure.nbp;
 
 import com.pwoj.as.account.domain.dto.CurrencyCode;
-import com.pwoj.as.account.infrastructure.dto.ExchangeData;
+import com.pwoj.as.account.infrastructure.nbp.dto.ExchangeData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;

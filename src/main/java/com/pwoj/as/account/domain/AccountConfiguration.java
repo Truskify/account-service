@@ -1,6 +1,6 @@
 package com.pwoj.as.account.domain;
 
-import com.pwoj.as.account.infrastructure.NbpRestClient;
+import com.pwoj.as.account.infrastructure.nbp.NbpRestClient;
 import io.netty.channel.ChannelOption;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;

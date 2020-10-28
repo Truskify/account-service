@@ -6,7 +6,7 @@ import com.pwoj.as.account.domain.dto.AccountDto;
 import com.pwoj.as.account.domain.dto.CurrencyCode;
 import com.pwoj.as.account.domain.exception.AccountNotFoundException;
 import com.pwoj.as.account.domain.exception.InsufficientFundsException;
-import com.pwoj.as.account.infrastructure.NbpRestClient;
+import com.pwoj.as.account.infrastructure.nbp.NbpRestClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
