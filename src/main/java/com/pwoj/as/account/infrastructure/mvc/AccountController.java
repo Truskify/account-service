@@ -86,6 +86,11 @@ class AccountController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON).body(buildErrorResponseJson(e));
     }
 
+    @ExceptionHandler({Exception.class})
+    public ResponseEntity<String> handleIllegalStateException(Exception e) throws JsonProcessingException {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).contentType(MediaType.APPLICATION_JSON).body(buildErrorResponseJson(e));
+    }
+
 
     @ExceptionHandler({WebClientResponseException.class})
     public ResponseEntity<String> handleWebClientResponseException(WebClientResponseException e) {
