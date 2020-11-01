@@ -1,7 +1,11 @@
 package com.pwoj.as.account.util;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 import java.time.LocalDate;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class PeselHelper {
 
     public static LocalDate getBirthDate(String pesel) {
