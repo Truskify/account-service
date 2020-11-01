@@ -39,7 +39,7 @@ class AccountFacadeTest {
     public static final String VALID_PESEL = "98112315725";
 
     @Autowired
-    private AccountFacade accountFacade;
+    private AccountFacadeImpl accountFacade;
     @Autowired
     private AccountRepository accountRepository;
     @Autowired

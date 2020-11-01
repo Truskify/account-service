@@ -22,10 +22,10 @@ class AccountConfiguration {
     private Integer timeout;
 
     @Bean
-    public AccountFacade accountFacade(AccountRepository accountRepository, SubAccountRepository subAccountRepository, NbpRestClient nbpRestClient) {
+    public AccountFacadeImpl accountFacade(AccountRepository accountRepository, SubAccountRepository subAccountRepository, NbpRestClient nbpRestClient) {
         AccountMapper accountMapper = new AccountMapper();
 
-        return new AccountFacade(new AccountManager(accountRepository, subAccountRepository, accountMapper, nbpRestClient), new AccountValidator(accountRepository));
+        return new AccountFacadeImpl(new AccountManager(accountRepository, subAccountRepository, accountMapper, nbpRestClient), new AccountValidator(accountRepository));
     }
 
     @Bean

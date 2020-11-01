@@ -2,7 +2,7 @@ package com.pwoj.as.account.infrastructure.mvc;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.pwoj.as.account.domain.AccountFacade;
+import com.pwoj.as.account.domain.AccountFacadeImpl;
 import com.pwoj.as.account.domain.command.CreateAccountCommand;
 import com.pwoj.as.account.domain.dto.AccountDto;
 import com.pwoj.as.account.domain.dto.CurrencyCode;
@@ -36,7 +36,7 @@ import java.util.UUID;
 @Slf4j
 class AccountController {
 
-    private final AccountFacade accountFacade;
+    private final AccountFacadeImpl accountFacade;
     private final ObjectMapper objectMapper;
 
     @PostMapping
