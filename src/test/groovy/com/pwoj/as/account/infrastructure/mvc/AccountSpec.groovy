@@ -22,36 +22,32 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import static org.springframework.restdocs.payload.PayloadDocumentation.requestBody
-import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters
-import static org.springframework.restdocs.request.RequestDocumentation.requestParameters
+import static org.springframework.restdocs.payload.PayloadDocumentation.*
+import static org.springframework.restdocs.request.RequestDocumentation.*
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = AccountServiceApplication.class)
 class AccountSpec extends Specification {
+    private static final String PESEL = "90121267263"
 
     @Rule
-    JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation()
+    private JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation()
 
     @Autowired
-    WebApplicationContext context
+    private WebApplicationContext context
 
     @Autowired
-    AccountRepository accountRepository
+    private AccountRepository accountRepository
 
-    MockMvc mockMvc
+    private MockMvc mockMvc
 
     void setup() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.context)
                 .apply(documentationConfiguration(this.restDocumentation)).build()
+        accountRepository.deleteAll()
     }
 
     void 'Create account'() {
-
         expect:
         mockMvc.perform(post("/v1/api/accounts")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -76,14 +72,14 @@ class AccountSpec extends Specification {
 
 
     void 'Retrieve account details'() {
-        def id = prepareDatabase()
+        prepareDatabase()
 
         expect:
-        mockMvc.perform(get("/v1/api/accounts/{id}", id))
+        mockMvc.perform(get("/v1/api/accounts/{pesel}", PESEL))
                 .andExpect(status().isOk())
                 .andDo(MockMvcResultHandlers.print())
                 .andDo(document('get-account-details',
-                        pathParameters(parameterWithName("id").description("Account identity.")),
+                        pathParameters(parameterWithName("pesel").description("User pesel.")),
                         responseFields(
                                 [
                                         fieldWithPath('name').type(JsonFieldType.STRING).description('User name.'),
@@ -95,17 +91,17 @@ class AccountSpec extends Specification {
     }
 
     void 'Exchange money between accounts'() {
-        def id = prepareDatabase()
+        prepareDatabase()
 
         expect:
-        mockMvc.perform(get("/v1/api/accounts/{id}/exchange", id)
+        mockMvc.perform(get("/v1/api/accounts/{pesel}/exchange", PESEL)
                 .queryParam("sourceCurrency", CurrencyCode.USD.name())
                 .queryParam("targetCurrency", CurrencyCode.PLN.name())
                 .queryParam("amount", "10.10"))
                 .andExpect(status().isOk())
                 .andDo(MockMvcResultHandlers.print())
                 .andDo(document('exchange-money-between-accounts',
-                        pathParameters(parameterWithName("id").description("Account identity.")),
+                        pathParameters(parameterWithName("pesel").description("User pesel.")),
                         requestParameters(
                                 [
                                         parameterWithName("sourceCurrency").description("Source currency."),
@@ -116,7 +112,7 @@ class AccountSpec extends Specification {
 
     }
 
-    private UUID prepareDatabase() {
+    private void prepareDatabase() {
         def subAccountPln = SubAccount.builder()
                 .balance(new BigDecimal("100.01"))
                 .currency(CurrencyCode.PLN)
@@ -131,14 +127,12 @@ class AccountSpec extends Specification {
         def account = Account.builder()
                 .name("name")
                 .surname("surname")
-                .pesel("90121267263")
+                .pesel(PESEL)
                 .subAccounts(Lists.newArrayList(subAccountPln, subAccountUsd))
                 .build()
         subAccountUsd.setAccount(account)
         subAccountPln.setAccount(account)
 
         accountRepository.save(account)
-
-        return account.getId()
     }
 }

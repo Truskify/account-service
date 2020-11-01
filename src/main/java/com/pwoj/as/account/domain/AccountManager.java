@@ -52,15 +52,16 @@ class AccountManager {
 
     }
 
-    AccountDto getAccountDetails(UUID id) {
-        Account account = accountRepository.findById(id)
-                .orElseThrow(() -> createAccountNotExistsException(id));
+    AccountDto getAccountDetails(String pesel) {
+        Account account = getAccountByPesel(pesel);
 
         return accountMapper.mapToAccountDto(account);
     }
 
-    void exchangeMoneyBetweenAccounts(UUID accountId, CurrencyCode sourceCurrency, CurrencyCode targetCurrency, BigDecimal amount) {
+    void exchangeMoneyBetweenAccounts(String pesel, CurrencyCode sourceCurrency, CurrencyCode targetCurrency, BigDecimal amount) {
         CurrencyCode currency = CurrencyCode.PLN.equals(sourceCurrency) ? targetCurrency : sourceCurrency;
+        UUID accountId = getAccountByPesel(pesel)
+                .getId();
 
         SubAccount sourceCurrencySubAccount = subAccountRepository.findByAccountIdAndCurrency(accountId, sourceCurrency);
         SubAccount targetCurrencySubAccount = subAccountRepository.findByAccountIdAndCurrency(accountId, targetCurrency);
@@ -86,8 +87,13 @@ class AccountManager {
         subAccountRepository.save(sourceCurrencySubAccount);
     }
 
-    private AccountNotFoundException createAccountNotExistsException(UUID id) {
-        log.error("Account does not exist for given id [{}].", id);
+    private AccountNotFoundException createAccountNotExistsException(String pesel) {
+        log.error("Account does not exist for given pesel [{}].", pesel);
         return new AccountNotFoundException("Account does not exists.");
+    }
+
+    private Account getAccountByPesel(String pesel) {
+        return accountRepository.findAccountByPesel(pesel)
+                .orElseThrow(() -> createAccountNotExistsException(pesel));
     }
 }

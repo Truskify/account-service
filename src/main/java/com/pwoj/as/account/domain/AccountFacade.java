@@ -10,7 +10,7 @@ import java.util.UUID;
 public interface AccountFacade {
     UUID createAccount(CreateAccountCommand command);
 
-    AccountDto getAccountDetails(UUID id);
+    AccountDto getAccountDetails(String pesel);
 
-    void exchangeMoneyBetweenAccounts(UUID accountId, CurrencyCode sourceCurrency, CurrencyCode targetCurrency, BigDecimal amount);
+    void exchangeMoneyBetweenAccounts(String pesel, CurrencyCode sourceCurrency, CurrencyCode targetCurrency, BigDecimal amount);
 }

@@ -25,14 +25,14 @@ public class AccountFacadeImpl implements AccountFacade {
     }
 
     @Override
-    public AccountDto getAccountDetails(UUID id) {
-        log.info("Getting acocunt details for id: [{}].", id);
-        return accountManager.getAccountDetails(id);
+    public AccountDto getAccountDetails(String pesel) {
+        log.info("Getting acocunt details for pesel: [{}].", pesel);
+        return accountManager.getAccountDetails(pesel);
     }
 
     @Override
-    public void exchangeMoneyBetweenAccounts(UUID accountId, CurrencyCode sourceCurrency, CurrencyCode targetCurrency, BigDecimal amount) {
-        log.info("Try to exchange money for account [{}]. Amount: [{}], exchange currency [{}], target currency [{}].", accountId, amount, sourceCurrency, targetCurrency);
-        accountManager.exchangeMoneyBetweenAccounts(accountId, sourceCurrency, targetCurrency, amount);
+    public void exchangeMoneyBetweenAccounts(String pesel, CurrencyCode sourceCurrency, CurrencyCode targetCurrency, BigDecimal amount) {
+        log.info("Try to exchange money for pesel [{}]. Amount: [{}], exchange currency [{}], target currency [{}].", pesel, amount, sourceCurrency, targetCurrency);
+        accountManager.exchangeMoneyBetweenAccounts(pesel, sourceCurrency, targetCurrency, amount);
     }
 }

@@ -87,7 +87,7 @@ class AccountFacadeTest {
 
         AccountDto expectedAccount = buildAccountDto(usdBalance, plnBalance);
 
-        AccountDto result = accountFacade.getAccountDetails(account.getId());
+        AccountDto result = accountFacade.getAccountDetails(account.getPesel());
 
         assertEquals(expectedAccount, result);
 
@@ -102,7 +102,7 @@ class AccountFacadeTest {
         prepareNbpRestClientMock(exchangeRate);
 
         BigDecimal exchangeAmount = new BigDecimal("10.10");
-        accountFacade.exchangeMoneyBetweenAccounts(account.getId(), CurrencyCode.PLN, CurrencyCode.USD, exchangeAmount);
+        accountFacade.exchangeMoneyBetweenAccounts(account.getPesel(), CurrencyCode.PLN, CurrencyCode.USD, exchangeAmount);
 
 
         SubAccount plnSubAccount = subAccountRepository.findByAccountIdAndCurrency(account.getId(), CurrencyCode.PLN);
@@ -123,7 +123,7 @@ class AccountFacadeTest {
         BigDecimal exchangeAmount = new BigDecimal("10");
 
         assertThrows(InsufficientFundsException.class,
-                () -> accountFacade.exchangeMoneyBetweenAccounts(account.getId(), CurrencyCode.PLN, CurrencyCode.USD, exchangeAmount));
+                () -> accountFacade.exchangeMoneyBetweenAccounts(account.getPesel(), CurrencyCode.PLN, CurrencyCode.USD, exchangeAmount));
 
     }
 
@@ -137,7 +137,7 @@ class AccountFacadeTest {
         BigDecimal exchangeAmount = new BigDecimal("10");
 
         assertThrows(IllegalStateException.class,
-                () -> accountFacade.exchangeMoneyBetweenAccounts(account.getId(), CurrencyCode.USD, CurrencyCode.USD, exchangeAmount));
+                () -> accountFacade.exchangeMoneyBetweenAccounts(account.getPesel(), CurrencyCode.USD, CurrencyCode.USD, exchangeAmount));
 
     }
 
@@ -151,7 +151,7 @@ class AccountFacadeTest {
 
     @Test
     void shouldReturnExceptionWhenAccountNotFound() {
-        assertThrows(AccountNotFoundException.class, () -> accountFacade.getAccountDetails(UUID.randomUUID()));
+        assertThrows(AccountNotFoundException.class, () -> accountFacade.getAccountDetails("51090932975"));
 
     }
 

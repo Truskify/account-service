@@ -46,19 +46,19 @@ class AccountController {
         return accountFacade.createAccount(command);
     }
 
-    @GetMapping("/{id}")
-    public AccountDto getAccountDetails(@PathVariable UUID id) {
+    @GetMapping("/{pesel}")
+    public AccountDto getAccountDetails(@PathVariable String pesel) {
 
-        return accountFacade.getAccountDetails(id);
+        return accountFacade.getAccountDetails(pesel);
     }
 
-    @GetMapping("/{id}/exchange")
-    public void getAccountDetails(@PathVariable UUID id,
+    @GetMapping("/{pesel}/exchange")
+    public void getAccountDetails(@PathVariable String pesel,
                                   @RequestParam CurrencyCode sourceCurrency,
                                   @RequestParam CurrencyCode targetCurrency,
                                   @RequestParam BigDecimal amount) {
 
-        accountFacade.exchangeMoneyBetweenAccounts(id, sourceCurrency, targetCurrency, amount);
+        accountFacade.exchangeMoneyBetweenAccounts(pesel, sourceCurrency, targetCurrency, amount);
     }
 
     @ExceptionHandler({AccountNotFoundException.class})
