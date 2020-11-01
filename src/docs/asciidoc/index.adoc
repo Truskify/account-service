@@ -1,5 +1,4 @@
-= Game History Service API Guide
-e-fun.com;
+= Account Service API
 :doctype: book
 :icons: font
 :source-highlighter: highlightjs
@@ -10,7 +9,7 @@ e-fun.com;
 [introduction]
 = Introduction
 
-The Game History Service API is a RESTful web service that shows how to communicate with Account Service.
+The Account Service API is a RESTful web service that shows how to communicate with Account Service.
 
 [[overview-http-verbs]]
 == HTTP verbs
