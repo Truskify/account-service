@@ -1,0 +1,7 @@
+[[create-account]]
+=== Create account
+
+A `POST` request to crate account
+
+==== Request parameters
+include::{snippets}/create-account/request-body.adoc[]

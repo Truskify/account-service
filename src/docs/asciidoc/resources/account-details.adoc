@@ -1,0 +1,13 @@
+[[get-account-details]]
+=== Get account details
+
+A `GET` request with account id will return account details
+
+==== Request parameters
+include::{snippets}/get-account-details/path-parameters.adoc[]
+
+==== Response fields
+include::{snippets}/get-account-details/response-fields.adoc[]
+
+==== Query/Response example
+operation::get-account-details[snippets='curl-request,http-request,http-response']

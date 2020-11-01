@@ -1,0 +1,11 @@
+[[exchange-money]]
+=== Exchange money between accounts
+
+A `GET` request with account id that will exchange money between accounts
+
+==== Request parameters
+include::{snippets}/exchange-money-between-accounts/path-parameters.adoc[]
+include::{snippets}/exchange-money-between-accounts/request-parameters.adoc[]
+
+==== Query/Response example
+operation::exchange-money-between-accounts[snippets='curl-request,http-request,http-response']

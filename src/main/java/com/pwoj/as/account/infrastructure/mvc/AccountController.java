@@ -30,7 +30,7 @@ import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-@RequestMapping("/v1/api/account")
+@RequestMapping("/v1/api/accounts")
 @RestController
 @RequiredArgsConstructor
 @Slf4j
@@ -90,7 +90,6 @@ class AccountController {
     public ResponseEntity<String> handleIllegalStateException(Exception e) throws JsonProcessingException {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).contentType(MediaType.APPLICATION_JSON).body(buildErrorResponseJson(e));
     }
-
 
     @ExceptionHandler({WebClientResponseException.class})
     public ResponseEntity<String> handleWebClientResponseException(WebClientResponseException e) {

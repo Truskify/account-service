@@ -6,6 +6,8 @@ spring:
   profiles: dev
   jpa:
     show-sql: true
+    hibernate:
+      ddl-auto: update
 
 nbp:
   url: http://api.nbp.pl/api/
