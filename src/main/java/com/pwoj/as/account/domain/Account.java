@@ -13,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.Version;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,6 +26,8 @@ class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
+    @Version
+    private Long version;
     @Column(nullable = false)
     private String name;
     @Column(nullable = false)

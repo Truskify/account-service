@@ -15,6 +15,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.Version;
 import java.math.BigDecimal;
 import java.util.UUID;
 
@@ -27,6 +28,8 @@ class SubAccount {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
+    @Version
+    private Long version;
     @Enumerated(value = EnumType.STRING)
     @Column(nullable = false)
     private CurrencyCode currency;
