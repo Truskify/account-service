@@ -24,8 +24,9 @@ class AccountConfiguration {
     @Bean
     public AccountFacadeImpl accountFacade(AccountRepository accountRepository, SubAccountRepository subAccountRepository, NbpRestClient nbpRestClient) {
         AccountMapper accountMapper = new AccountMapper();
+        ExchangeService exchangeService = new ExchangeService(subAccountRepository, nbpRestClient);
 
-        return new AccountFacadeImpl(new AccountManager(accountRepository, subAccountRepository, accountMapper, nbpRestClient), new AccountValidator(accountRepository));
+        return new AccountFacadeImpl(new AccountManager(accountRepository, accountMapper, exchangeService), new AccountValidator(accountRepository));
     }
 
     @Bean
